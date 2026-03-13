@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>KIE11 · Bonus Hunt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #05050a;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* ===== VIBRANT SPACE BACKGROUND ===== */
+    .space-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background: radial-gradient(ellipse at 30% 30%, #2d0b4a, #0a0015 80%);
+    }
+    .stars-small, .stars-medium, .stars-large {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%;
+    }
+    .stars-small {
+      box-shadow: 1245px 832px 0 0 rgba(255,200,255,0.8), 357px 1238px 0 0 rgba(200,180,255,0.7), 1892px 210px 0 0 rgba(255,240,200,0.9), 78px 645px 0 0 rgba(255,255,255,0.6), 1567px 998px 0 0 rgba(200,220,255,0.8), 2345px 1456px 0 0 rgba(255,200,200,0.5), 102px 1890px 0 0 rgba(210,180,255,0.7), 2010px 500px 0 0 rgba(255,255,200,0.8), 750px 1700px 0 0 rgba(255,210,255,0.6), 1300px 2200px 0 0 rgba(200,200,255,0.8), 300px 2400px 0 0 rgba(240,200,255,0.7), 2500px 800px 0 0 rgba(255,220,210,0.6), 1100px 1300px 0 0 rgba(255,240,255,0.9), 1800px 1900px 0 0 rgba(210,200,255,0.5), 400px 400px 0 0 rgba(255,210,240,0.8), 2200px 300px 0 0 rgba(200,200,255,0.7), 900px 2100px 0 0 rgba(240,220,255,0.6);
+      animation: drift 200s linear infinite;
+    }
+    .stars-medium {
+      box-shadow: 350px 820px 0 1px rgba(255,150,255,0.9), 1450px 320px 0 1px rgba(180,150,255,1), 780px 1480px 0 2px rgba(200,120,255,0.8), 1990px 650px 0 1px rgba(255,180,255,0.9), 500px 1900px 0 2px rgba(230,150,255,0.7), 2300px 1100px 0 1px rgba(210,160,255,1), 1200px 2200px 0 1px rgba(255,200,255,0.8), 270px 1500px 0 2px rgba(160,100,255,0.6), 1850px 1700px 0 1px rgba(200,120,255,0.9), 600px 600px 0 2px rgba(255,180,255,1);
+      animation: drift 150s linear infinite reverse;
+    }
+    .stars-large {
+      box-shadow: 120px 320px 0 3px rgba(255,255,255,1), 870px 1250px 0 4px rgba(255,200,255,1), 1620px 880px 0 3px rgba(200,150,255,1), 420px 1820px 0 5px rgba(255,220,150,1), 2010px 400px 0 4px rgba(220,140,255,1), 1300px 1500px 0 3px rgba(255,255,150,1), 550px 2200px 0 4px rgba(210,120,255,1), 2450px 700px 0 3px rgba(255,200,255,1), 900px 300px 0 5px rgba(240,150,255,1);
+      animation: twinkle 4s infinite alternate, drift 300s linear infinite;
+    }
+    .nebula {
+      position: absolute; top:0; left:0; width:100%; height:100%;
+      background: 
+        radial-gradient(circle at 20%30%, rgba(200,0,255,0.35) 0%, transparent 35%),
+        radial-gradient(circle at 80%70%, rgba(100,0,200,0.3) 0%, transparent 40%),
+        radial-gradient(circle at 40%80%, rgba(255,100,200,0.25) 0%, transparent 45%),
+        radial-gradient(circle at 70%20%, rgba(150,0,255,0.3) 0%, transparent 35%),
+        radial-gradient(circle at 90%10%, rgba(255,150,100,0.2) 0%, transparent 40%);
+      filter: blur(40px);
+      mix-blend-mode: screen;
+      animation: nebulaPulse 15s infinite alternate;
+    }
+    .shooting-stars { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; }
+    .shooting-star { position: absolute; left:-10%; top:20%; width:150px; height:2px; background:linear-gradient(90deg, rgba(255,255,255,1), rgba(200,160,255,0)); border-radius:50%; filter:drop-shadow(0 0 8px #ffaaff); opacity:0; transform:rotate(20deg); animation: shoot 8s linear infinite; }
+    .shooting-star:nth-child(2) { top:60%; left:-5%; animation-delay:3s; width:200px; background:linear-gradient(90deg, #fff, #ff99ff); }
+    .shooting-star:nth-child(3) { top:80%; left:-15%; animation-delay:5.5s; width:120px; background:linear-gradient(90deg, #fff, #aaccff); }
+    .shooting-star:nth-child(4) { top:30%; left:-20%; animation-delay:1.2s; width:180px; background:linear-gradient(90deg, #fff, #ffccaa); }
+    .shooting-star:nth-child(5) { top:45%; left:-8%; animation-delay:7.3s; width:220px; background:linear-gradient(90deg, #fff, #c0a0ff); }
+
+    @keyframes drift { 0% { transform:translateY(0) translateX(0); } 100% { transform:translateY(-1000px) translateX(300px); } }
+    @keyframes twinkle { 0% { opacity:0.5; } 100% { opacity:1; } }
+    @keyframes nebulaPulse { 0% { opacity:0.4; filter:blur(40px); } 100% { opacity:0.9; filter:blur(50px); } }
+    @keyframes shoot { 0% { transform:translateX(0) translateY(0) rotate(20deg); opacity:1; } 70% { opacity:1; } 100% { transform:translateX(120vw) translateY(30vh) rotate(20deg); opacity:0; } }
+
+    /* Top Navigation with Logo */
+    .top-nav {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: rgba(10,0,20,0.3);
+      backdrop-filter: blur(10px);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .logo {
+      font-family:'Orbitron';
+      font-size: 1.5rem;
+      font-weight:800;
+      background:linear-gradient(145deg,#fff,#d9b0ff,#b87cff);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 10px #b87cff;
+    }
+    .nav-links {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .nav-links a {
+      color:#ccc;
+      text-decoration:none;
+      font-size:0.9rem;
+      transition:0.3s;
+      font-weight:600;
+      cursor:pointer;
+      padding:0.5rem 1rem;
+      border-radius:30px;
+      white-space: nowrap;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color:white;
+      background:rgba(184,124,255,0.2);
+      text-shadow:0 0 8px #b87cff;
+    }
+
+    /* Main Content - centered */
+    .main-content {
+      width: 100%;
+      max-width: 750px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      flex:1;
+    }
+
+    /* Cards - centered text */
+    .card {
+      background:rgba(20,10,30,0.7);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(200,100,255,0.3);
+      border-radius:20px;
+      padding:1.5rem;
+      box-shadow:0 10px 30px rgba(0,0,0,0.6), 0 0 20px #b87cff;
+      text-align: center;
+      width: 100%;
+    }
+    .card h2 {
+      font-family:'Orbitron';
+      margin-bottom:1rem;
+      color:#b87cff;
+      font-size:1.6rem;
+    }
+
+    /* Home Page - now with KIE11 centered */
+    .welcome-box { text-align:center; }
+    .welcome-box h1 {
+      font-size:3rem;
+      font-family:'Orbitron';
+      background:linear-gradient(145deg,#fff,#d9b0ff,#b87cff);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      margin-bottom:0.5rem;
+      text-shadow:0 0 20px #b87cff;
+    }
+    .jackpotter-link {
+      display:inline-block;
+      background:#8a2be2;
+      padding:0.8rem 1.8rem;
+      border-radius:40px;
+      font-size:1.2rem;
+      font-weight:800;
+      color:white;
+      text-decoration:none;
+      box-shadow:0 0 20px #b87cff;
+      transition:0.2s;
+      margin:1.5rem 0 0.5rem;
+    }
+    .jackpotter-link:hover { transform:scale(1.05); background:#9f4eff; box-shadow:0 0 40px #b87cff; }
+
+    /* Bonus Hunt */
+    .bonus-stats {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom:1.5rem;
+    }
+    .bonus-count { font-size:1.8rem; font-family:'Orbitron'; color:#00ff88; }
+    .bonus-prize-info { font-size:1rem; color:#b87cff; }
+    .progress-bar {
+      width: 100%;
+      height:20px;
+      background:#1a1a2e;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid #b87cff;
+    }
+    .progress-fill { height:100%; background:linear-gradient(90deg, #8a2be2, #b87cff); width:0%; transition:width 0.3s; }
+    .game-area {
+      background:rgba(0,0,0,0.3);
+      border-radius:15px;
+      padding:1.2rem;
+      margin:1.5rem 0;
+      border:1px solid rgba(200,100,255,0.2);
+    }
+    .guess-input {
+      display: flex;
+      flex-direction: column;
+      gap:0.5rem;
+      margin-top:0.8rem;
+    }
+    .guess-input input {
+      background:#1a0b2a;
+      border:1px solid #c68eff;
+      color:white;
+      padding:0.7rem;
+      border-radius:10px;
+      width:100%;
+    }
+    .guess-input button {
+      width:100%;
+    }
+    .guess-result { margin-top:0.8rem; font-size:1rem; }
+
+    /* Connections Page */
+    .section-title {
+      font-size:1.2rem;
+      margin:1.5rem 0 1rem;
+      color:#b87cff;
+      border-bottom:2px solid #b87cff;
+      padding-bottom:0.3rem;
+      text-align: center;
+    }
+    .conn-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap:1rem;
+      margin-bottom:1.5rem;
+    }
+    .conn-card {
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:15px;
+      padding:1.2rem;
+      text-align:center;
+    }
+    .conn-card i { font-size:2.5rem; margin-bottom:0.5rem; }
+    .conn-status { font-size:0.75rem; color:#00ff88; margin-bottom:0.8rem; }
+    .conn-btn, .unlink-btn {
+      width:100%;
+      padding:0.6rem;
+      border-radius:8px;
+      font-size:0.8rem;
+    }
+
+    .community-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap:1rem;
+    }
+    .community-card {
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:15px;
+      padding:1.2rem;
+      text-align:center;
+      transition:0.3s;
+      text-decoration:none;
+      color:white;
+    }
+    .community-card:hover { transform:scale(1.02); border-color:#b87cff; box-shadow:0 0 20px #b87cff; }
+    .community-card i { font-size:3rem; margin-bottom:0.5rem; }
+    .community-card span { font-size:1.1rem; font-family:'Orbitron'; }
+
+    /* Admin Panel */
+    .admin-section {
+      background:rgba(40,10,50,0.8);
+      border:2px solid #ff4d4d;
+      border-radius:15px;
+      padding:1.2rem;
+      animation: adminGlow 3s infinite alternate;
+    }
+    @keyframes adminGlow {
+      0% { box-shadow:0 0 10px #ff4d4d; border-color:#ff4d4d; }
+      100% { box-shadow:0 0 25px #ff4d4d, 0 0 50px #b87cff; border-color:#fff; }
+    }
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap:1rem;
+    }
+    input, button {
+      background:rgba(0,0,0,0.4);
+      border:1px solid #b87cff;
+      color:white;
+      padding:0.6rem;
+      border-radius:8px;
+      width:100%;
+      margin-bottom:0.5rem;
+    }
+    button {
+      background:#8a2be2;
+      border:none;
+      font-weight:600;
+      cursor:pointer;
+    }
+    button:hover { background:#9f4eff; }
+
+    .winners-table {
+      width:100%;
+      border-collapse:collapse;
+      margin-top:1rem;
+      font-size:0.85rem;
+      text-align: left;
+    }
+    .winners-table th, .winners-table td {
+      padding:0.5rem;
+      text-align:left;
+      border-bottom:1px solid rgba(200,100,255,0.3);
+    }
+    .winners-table th { color:#b87cff; }
+
+    .hidden { display:none; }
+    .footer {
+      text-align:center;
+      margin:1rem 0;
+      color:#c9a6ff;
+      font-size:0.7rem;
+    }
+
+    /* Tablet and up */
+    @media (min-width: 600px) {
+      .top-nav { padding: 0.8rem 3rem; }
+      .logo { font-size: 1.8rem; }
+      .nav-links a { font-size: 1rem; }
+      .main-content { max-width: 800px; }
+      .card h2 { font-size: 1.8rem; }
+      .welcome-box h1 { font-size: 3.5rem; }
+      .jackpotter-link { font-size: 1.5rem; }
+      .bonus-stats { flex-direction: row; }
+      .guess-input { flex-direction: row; }
+      .guess-input button { width: auto; }
+      .conn-grid { grid-template-columns: repeat(2,1fr); }
+      .community-grid { grid-template-columns: repeat(2,1fr); }
+      .admin-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="space-bg">
+    <div class="stars-small"></div><div class="stars-medium"></div><div class="stars-large"></div><div class="nebula"></div>
+    <div class="shooting-stars"><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div></div>
+  </div>
+
+  <nav class="top-nav">
+    <div class="logo">KIE11</div>
+    <div class="nav-links">
+      <a class="active" onclick="switchPage('home')">HOME</a>
+      <a onclick="switchPage('bonus')">BONUS HUNT</a>
+      <a onclick="switchPage('connections')">CONNECTIONS</a>
+      <a onclick="switchPage('admin')">ADMIN</a>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <!-- Home Page with KIE11 centered -->
+    <div id="homePage" class="card">
+      <div class="welcome-box">
+        <h1>KIE11</h1>
+        <a href="https://jackpotter.com/?modal=sign-up&p=KIEJP" target="_blank" class="jackpotter-link">
+          <i class="fas fa-dice"></i> JACKPOTTER
+        </a>
+      </div>
+    </div>
+
+    <!-- Bonus Hunt Page -->
+    <div id="bonusPage" class="card hidden">
+      <h2><i class="fas fa-gem"></i> BONUS HUNT</h2>
+      <div id="bonusLockMessage" class="hidden" style="background:#ff4d4d20; border:1px solid #ff4d4d; padding:0.8rem; border-radius:8px; margin-bottom:1rem; font-size:0.9rem;">
+        You must link your Discord and Kick accounts to join the Bonus Hunt.
+      </div>
+      <div id="bonusContent">
+        <div class="bonus-stats">
+          <div>
+            <span class="bonus-count" id="bonusCollected">0</span> / <span id="bonusTotal">30</span> BONUSES
+          </div>
+          <div class="bonus-prize-info" id="prizeDisplay">Total Prize: $0</div>
+          <div class="progress-bar"><div class="progress-fill" id="bonusProgress" style="width:0%"></div></div>
+        </div>
+
+        <div class="game-area">
+          <h3>Guess the Balance</h3>
+          <p style="font-size:0.9rem;">Guess a number between 1 and 100. Correct = bonus worth <span id="bonusValueDisplay">$1.00</span>!</p>
+          <div class="guess-input">
+            <input type="number" id="guessInput" placeholder="Your guess" min="1" max="100">
+            <button id="guessBtn">Submit</button>
+          </div>
+          <div id="guessResult" class="guess-result"></div>
+        </div>
+
+        <div class="game-area">
+          <h3>Claim Bonus Code</h3>
+          <p style="font-size:0.9rem;">Enter a bonus code (simulated)</p>
+          <div class="guess-input">
+            <input type="text" id="bonusCodeInput" placeholder="e.g. KIE2025">
+            <button id="claimCodeBtn">Claim</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connections Page -->
+    <div id="connectionsPage" class="card hidden">
+      <h2><i class="fas fa-link"></i> CONNECTIONS</h2>
+
+      <div class="section-title"><i class="fas fa-user-check"></i> LINK YOUR ACCOUNTS</div>
+      <div class="conn-grid" id="connectionsGrid"></div>
+
+      <div class="section-title"><i class="fas fa-users"></i> JOIN OUR COMMUNITY</div>
+      <div class="community-grid">
+        <a href="https://discord.gg/4kcTCk8T" target="_blank" class="community-card">
+          <i class="fab fa-discord" style="color:#5865f2;"></i>
+          <span>DISCORD SERVER</span>
+        </a>
+        <a href="https://kick.com/kie11" target="_blank" class="community-card">
+          <i class="fab fa-kickstarter" style="color:#00ff88;"></i>
+          <span>WATCH ON KICK</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Admin Page -->
+    <div id="adminPage" class="card hidden">
+      <div class="admin-section">
+        <h2 style="color:#ff4d4d;"><i class="fas fa-crown"></i> ADMIN PANEL</h2>
+        <div class="admin-grid">
+          <div>
+            <label>Bonus Hunt Settings</label>
+            <input type="number" id="adminBonusTotal" placeholder="Total bonuses" value="30">
+            <input type="number" id="adminBonusValue" placeholder="Bonus value ($)" value="1.00" step="0.01">
+            <button id="updateBonusTotal"><i class="fas fa-save"></i> Update</button>
+            <button id="resetBonusBtn" style="background:#ff4d4d;"><i class="fas fa-undo"></i> Reset</button>
+          </div>
+          <div>
+            <label>Add Winner</label>
+            <input type="text" id="winnerName" placeholder="Name">
+            <input type="text" id="winnerPrize" placeholder="Prize">
+            <input type="text" id="winnerDate" placeholder="Date (e.g. Mar 2026)">
+            <button id="addWinnerBtn"><i class="fas fa-plus-circle"></i> Add</button>
+          </div>
+        </div>
+
+        <h3 style="margin-top:1.5rem; color:#b87cff;"><i class="fas fa-trophy"></i> WINNERS</h3>
+        <table class="winners-table">
+          <thead><tr><th>Winner</th><th>Prize</th><th>Date</th><th></th></tr></thead>
+          <tbody id="winnersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><i class="fas fa-star"></i> KIE11 · Where Hunters Win</div>
+
+  <script>
+    // ---------- MOCK DATABASE ----------
+    let currentUser = null;
+    let bonusTotal = 30;
+    let bonusCollected = 0;
+    let bonusValue = 1.00;
+    let winners = [
+      { name: 'Player123', prize: '$200', date: 'Feb 2026' },
+      { name: 'AlphaKing', prize: 'Headset', date: 'Jan 2026' }
+    ];
+
+    // Page switching
+    function switchPage(page) {
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('homePage').classList.add('hidden');
+      document.getElementById('bonusPage').classList.add('hidden');
+      document.getElementById('connectionsPage').classList.add('hidden');
+      document.getElementById('adminPage').classList.add('hidden');
+      document.getElementById(page + 'Page').classList.remove('hidden');
+    }
+
+    // Update UI based on user
+    function updateUI() {
+      const grid = document.getElementById('connectionsGrid');
+      if (currentUser) {
+        grid.innerHTML = `
+          <div class="conn-card">
+            <i class="fab fa-discord" style="color:#5865f2;"></i>
+            <span class="conn-status">${currentUser.discordLinked ? '● Linked as ' + currentUser.username : '○ Not linked'}</span>
+            ${currentUser.discordLinked 
+              ? '<button class="unlink-btn" onclick="unlinkDiscord()">Unlink</button>' 
+              : '<button class="conn-btn" onclick="linkDiscord()">Link Discord</button>'}
+          </div>
+          <div class="conn-card">
+            <i class="fab fa-kickstarter" style="color:#00ff88;"></i>
+            <span class="conn-status">${currentUser.kickLinked ? '● Verified as ' + currentUser.kickUsername : '○ Not linked'}</span>
+            ${currentUser.kickLinked 
+              ? '<button class="unlink-btn" onclick="unlinkKick()">Unlink</button>' 
+              : '<button class="conn-btn" onclick="linkKick()">Link Kick</button>'}
+          </div>
+        `;
+      } else {
+        grid.innerHTML = `
+          <div class="conn-card">
+            <i class="fab fa-discord"></i>
+            <span class="conn-status">Not linked</span>
+            <button class="conn-btn" onclick="mockLogin()">Login with Discord</button>
+          </div>
+          <div class="conn-card">
+            <i class="fab fa-kickstarter"></i>
+            <span class="conn-status">Not linked</span>
+            <button class="conn-btn" disabled>Login First</button>
+          </div>
+        `;
+      }
+      updateBonusLock();
+      updateBonusUI();
+      updateWinnersTable();
+    }
+
+    function mockLogin() {
+      const role = prompt('Enter role (Admin, User)', 'User');
+      if (!role) return;
+      let normalizedRole = 'User';
+      if (role.toLowerCase() === 'admin') normalizedRole = 'Admin';
+      currentUser = {
+        discordId: 'discord_' + Math.random().toString(36).substring(2),
+        username: normalizedRole + 'User_' + Math.floor(Math.random() * 1000),
+        role: normalizedRole,
+        discordLinked: true,
+        kickLinked: false,
+        kickUsername: ''
+      };
+      updateUI();
+    }
+
+    window.linkDiscord = function() { alert('Discord OAuth simulation'); currentUser.discordLinked = true; updateUI(); };
+    window.unlinkDiscord = function() { currentUser.discordLinked = false; updateUI(); };
+    window.linkKick = function() { let k = prompt('Kick username?'); if(k) { currentUser.kickLinked = true; currentUser.kickUsername = k; } updateUI(); };
+    window.unlinkKick = function() { currentUser.kickLinked = false; currentUser.kickUsername = ''; updateUI(); };
+
+    function updateBonusLock() {
+      const lockMsg = document.getElementById('bonusLockMessage');
+      const content = document.getElementById('bonusContent');
+      if (!currentUser || !currentUser.discordLinked || !currentUser.kickLinked) {
+        lockMsg.classList.remove('hidden');
+        content.classList.add('hidden');
+        if (!currentUser) lockMsg.innerHTML = 'You must be logged in and link both accounts. <button onclick="mockLogin()" style="margin-left:5px; padding:5px 8px; background:#8a2be2; font-size:0.8rem;">Login</button>';
+        else lockMsg.innerHTML = 'Please link both Discord and Kick accounts in the Connections page.';
+      } else {
+        lockMsg.classList.add('hidden');
+        content.classList.remove('hidden');
+      }
+    }
+
+    function updateBonusUI() {
+      document.getElementById('bonusCollected').innerText = bonusCollected;
+      document.getElementById('bonusTotal').innerText = bonusTotal;
+      document.getElementById('bonusProgress').style.width = (bonusCollected/bonusTotal*100)+'%';
+      document.getElementById('prizeDisplay').innerText = `Total Prize: $${(bonusCollected*bonusValue).toFixed(2)}`;
+      document.getElementById('bonusValueDisplay').innerText = `$${bonusValue.toFixed(2)}`;
+    }
+
+    document.getElementById('guessBtn')?.addEventListener('click', () => {
+      if (!currentUser?.discordLinked || !currentUser?.kickLinked) return alert('Link accounts first.');
+      if (bonusCollected >= bonusTotal) return alert('Hunt completed.');
+      let guess = +document.getElementById('guessInput').value;
+      let target = Math.floor(Math.random()*100)+1;
+      if (guess === target) {
+        bonusCollected = Math.min(bonusCollected+1, bonusTotal);
+        document.getElementById('guessResult').innerHTML = `<span style="color:#00ff88;">✅ Correct! +$${bonusValue.toFixed(2)}</span>`;
+      } else {
+        document.getElementById('guessResult').innerHTML = `<span style="color:#ff4d4d;">❌ Wrong, it was ${target}</span>`;
+      }
+      updateBonusUI();
+    });
+
+    document.getElementById('claimCodeBtn')?.addEventListener('click', () => {
+      if (!currentUser?.discordLinked || !currentUser?.kickLinked) return alert('Link accounts first.');
+      if (bonusCollected >= bonusTotal) return alert('Hunt completed.');
+      let code = document.getElementById('bonusCodeInput').value.trim().toUpperCase();
+      if (code.startsWith('KIE') && code.length>3) {
+        bonusCollected = Math.min(bonusCollected+1, bonusTotal);
+        alert(`✅ +$${bonusValue.toFixed(2)}`);
+      } else alert('❌ Invalid code');
+      updateBonusUI();
+    });
+
+    document.getElementById('updateBonusTotal')?.addEventListener('click', () => {
+      let t = +document.getElementById('adminBonusTotal').value;
+      let v = +document.getElementById('adminBonusValue').value;
+      if (t>0) bonusTotal = t;
+      if (v>0) bonusValue = v;
+      if (bonusCollected > bonusTotal) bonusCollected = bonusTotal;
+      updateBonusUI();
+      alert('Settings updated');
+    });
+    document.getElementById('resetBonusBtn')?.addEventListener('click', () => { bonusCollected = 0; updateBonusUI(); });
+    document.getElementById('addWinnerBtn')?.addEventListener('click', () => {
+      let n = document.getElementById('winnerName').value;
+      let p = document.getElementById('winnerPrize').value;
+      let d = document.getElementById('winnerDate').value;
+      if (n && p && d) { winners.push({name:n, prize:p, date:d}); updateWinnersTable(); }
+      else alert('Fill all fields');
+    });
+
+    function updateWinnersTable() {
+      document.getElementById('winnersBody').innerHTML = winners.map((w,i) => `
+        <tr><td>${w.name}</td><td>${w.prize}</td><td>${w.date}</td>
+        <td><button onclick="deleteWinner(${i})" style="background:#ff4d4d; padding:0.2rem 0.5rem; font-size:0.7rem;">Delete</button></td></tr>
+      `).join('');
+    }
+    window.deleteWinner = (i) => { winners.splice(i,1); updateWinnersTable(); };
+
+    // Initial render
+    updateUI();
+  </script>
+</body>
+</html>
